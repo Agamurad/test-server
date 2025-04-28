@@ -1,13 +1,13 @@
 # 1. Build aşaması
-FROM maven:3.8.5-openjdk-17 AS build
+FROM gradle:8.5-jdk17 AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+RUN gradle build -x test
 
 # 2. Run aşaması
-FROM openjdk:17.0.1-jdk-slim
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
